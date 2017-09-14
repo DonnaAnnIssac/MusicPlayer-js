@@ -1,0 +1,15 @@
+.btn {
+  outline: none;
+  position: absolute;
+  opacity: 0.9;
+  cursor: pointer;
+}
+.btn:hover {
+  opacity: 1.0;
+}
+#playbtn {
+  background: url("./images/play2.png/") no-repeat;
+}
+#pausebtn {
+  background: url("./images/pause.png/") no-repeat;
+}
