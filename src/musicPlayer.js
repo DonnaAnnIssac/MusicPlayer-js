@@ -37,7 +37,7 @@ function initAudioPlayer() {
     var listItem = createListItem(song,index)
     playlistContainer.appendChild(listItem)
   })
-  var parent = document.getElementById('container')
+  var parent = document.getElementById('root')
   parent.appendChild(playlistContainer)
 }
 

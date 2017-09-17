@@ -1,10 +1,16 @@
-.btn {
+.controlsContainer {
   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #003d33;
+}
+.btn {
   outline: none;
   opacity: 0.9;
   cursor: pointer;
-  border-radius: 20px;
-  padding: 20px 150px;
+  padding: 20px;
+  box-sizing: border-box;
+  /*flex: 1;*/
 }
 .btn:hover {
   opacity: 1.0;
@@ -13,30 +19,29 @@
 #playBtn {
   background: url("./images/play2.png") no-repeat;
   background-size: 13px 18px;
-  flex: 1;
-  margin-left: 15px;
-  margin-right: 15px;
+  border-radius: 50px;
 }
 #pauseBtn {
   background: url("./images/pause2.png") no-repeat;
   background-size: 12px 19px;
-  flex: 1;
-  margin-left: 15px;
-  margin-right: 15px;
+  border-radius: 50px;
+  /*flex: 1;*/
 }
 
 #prevBtn {
   background: url("./images/prev.png") no-repeat;
   background-size: 12px 19px;
-  flex: 1;
-  margin-left: 15px;
-  margin-right: 15px;
+  border-radius: 50px;
+  /*flex: 1;*/
 }
 
 #nextBtn {
   background: url("./images/next.png") no-repeat;
   background-size: 12px 19px;
-  flex: 1;
-  margin-left: 15px;
-  margin-right: 15px;
+  border-radius: 50px;
+  /*flex: 1;*/
+}
+
+.trackInfo {
+  /*flex: 0;*/
 }
