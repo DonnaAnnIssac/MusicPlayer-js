@@ -6,20 +6,21 @@
       <link href="styles.css" rel="stylesheet">
   </head>
   <body>
-    <div id="title">
-      <div id="track"></div>
-      <div id="timer"></div>
-      <div id="duration"></div>
-    </div>
-    <div id="controlsOuter">
-      <div id="controlsInner">
+    <div id="container">
+      <div id="controls">
         <div class="btn">
-          <input type="button" id="prevBtn"></input>
-          <input type="button" id="playBtn"></input>
+          <input type="button" id="prevBtn" ></input>
+          <input type="button" id="playBtn" ></input>
           <input type="button" id="pauseBtn"></input>
           <input type="button" id="nextBtn"></input>
         </div>
+        <div id="trackInfo">
+          <div id="title"></div>
+          <div id="timer"></div>
+          <div id="duration"></div>
+        </div>
       </div>
+
     </div>
     <script src="src/node_modules/howler/dist/howler.js" type="text/javascript"></script>
     <script src="src/musicPlayer.js" type="text/javascript"></script>

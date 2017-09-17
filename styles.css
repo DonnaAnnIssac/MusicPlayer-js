@@ -1,15 +1,42 @@
 .btn {
+  display: flex;
   outline: none;
-  position: absolute;
   opacity: 0.9;
   cursor: pointer;
+  border-radius: 20px;
+  padding: 20px 150px;
 }
 .btn:hover {
   opacity: 1.0;
 }
-#playbtn {
-  background: url("./images/play2.png/") no-repeat;
+
+#playBtn {
+  background: url("./images/play2.png") no-repeat;
+  background-size: 13px 18px;
+  flex: 1;
+  margin-left: 15px;
+  margin-right: 15px;
 }
-#pausebtn {
-  background: url("./images/pause.png/") no-repeat;
+#pauseBtn {
+  background: url("./images/pause2.png") no-repeat;
+  background-size: 12px 19px;
+  flex: 1;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+#prevBtn {
+  background: url("./images/prev.png") no-repeat;
+  background-size: 12px 19px;
+  flex: 1;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+#nextBtn {
+  background: url("./images/next.png") no-repeat;
+  background-size: 12px 19px;
+  flex: 1;
+  margin-left: 15px;
+  margin-right: 15px;
 }
