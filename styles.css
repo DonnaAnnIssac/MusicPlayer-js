@@ -18,27 +18,23 @@
 
 #playBtn {
   background: url("./images/play2.png") no-repeat;
-  background-size: 13px 18px;
-  border-radius: 50px;
+  background-size: contain;
 }
 #pauseBtn {
   background: url("./images/pause2.png") no-repeat;
-  background-size: 12px 19px;
-  border-radius: 50px;
+  background-size: contain;
   /*flex: 1;*/
 }
 
 #prevBtn {
   background: url("./images/prev.png") no-repeat;
-  background-size: 12px 19px;
-  border-radius: 50px;
+  background-size: contain;
   /*flex: 1;*/
 }
 
 #nextBtn {
   background: url("./images/next.png") no-repeat;
-  background-size: 12px 19px;
-  border-radius: 50px;
+  background-size: contain;
   /*flex: 1;*/
 }
 
