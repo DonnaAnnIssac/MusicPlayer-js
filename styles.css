@@ -1,5 +1,7 @@
 body {
   background-color: #e0e0e0;
+  height: 100%;
+  margin: 0;
 }
 .controlsContainer {
   display: flex;
@@ -20,21 +22,21 @@ body {
 
 #playBtn {
   background: url("./images/play2.png") no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 #pauseBtn {
   background: url("./images/pause2.png") no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 #prevBtn {
   background: url("./images/prev.png") no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 #nextBtn {
   background: url("./images/next.png") no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 .trackInfo {
@@ -46,4 +48,10 @@ body {
   width: 100%;
   justify-content: center;
   font-family: Helvetica;
+  order: 1;
+}
+
+#timebox {
+  display: flex;
+  justify-content: center;
 }
