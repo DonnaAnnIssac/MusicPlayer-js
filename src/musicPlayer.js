@@ -13,7 +13,11 @@ var playlist = [{
 
 var player = {
   sound: new Howl({src: playlist[0].src,
-                   onload: () => updateTimeBox()}),
+                   onload: () => updateTrackDuration(),
+                   onplay: () => {player.playing = true
+                                  updateTrackTime()},
+                   onpause: () => {player.playing = false}
+                 }),
   soundIndex: 0,
   playing: false,
   title: playlist[0].title
@@ -24,8 +28,8 @@ pausebtn = document.getElementById('pauseBtn')
 prevbtn = document.getElementById('prevBtn')
 nextbtn = document.getElementById('nextBtn')
 trackTitle = document.getElementById('title')
-playbtn.addEventListener('click', () => {player.playing = true;player.sound.play()})
-pausebtn.addEventListener('click', () => {player.playing = false;player.sound.pause()})
+playbtn.addEventListener('click', () => {player.sound.play()})
+pausebtn.addEventListener('click', () => {player.sound.pause()})
 nextbtn.addEventListener('click', () => { index = (player.soundIndex < playlist.length - 1) ? player.soundIndex + 1 : 0
                                           update(playlist[index], index)
                                         })
@@ -70,16 +74,30 @@ function updateCurrTitle(song) {
   player.title = song.title
 }
 
-function updateTimeBox () {
+function updateTrackDuration () {
   var mins = Math.floor(player.sound._duration / 60)
   var secs = Math.floor(player.sound._duration - (mins * 60))
   duration.innerHTML = mins+':'+secs
 }
 
+function updateTrackTime () {
+  var totalMins = Math.floor(player.sound._duration / 60)
+  var totalSecs = Math.floor(player.sound._duration - (mins * 60))
+  var secs = 0
+  var mins = 0
+  var foo = setInterval(() => { if(mins == totalMins && secs == totalSecs)
+                                clearInterval(foo)
+                                timer.innerHTML = (pad(parseInt(secs/60))+':'+pad(secs%60))
+                                ++secs}, 1000)
+}
+
+function pad ( val ) { return val > 9 ? val : "0" + val }
+
 function update(song, index) {
   var sound = new Howl({
       src: song.src,
-      onload: () => updateTimeBox()})
+      onload: () => updateTrackDuration(),
+      onplay: () => {console.log("Hiya");updateTrackTime()}})
       updateCurrTitle(song)
       playSelected(sound, index)
 }
