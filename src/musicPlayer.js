@@ -12,7 +12,8 @@ var playlist = [{
 }]
 
 var player = {
-  sound: new Howl({src: playlist[0].src}),
+  sound: new Howl({src: playlist[0].src,
+                   onload: () => updateTimeBox()}),
   soundIndex: 0,
   playing: false,
   title: playlist[0].title
@@ -26,14 +27,10 @@ trackTitle = document.getElementById('title')
 playbtn.addEventListener('click', () => {player.playing = true;player.sound.play()})
 pausebtn.addEventListener('click', () => {player.playing = false;player.sound.pause()})
 nextbtn.addEventListener('click', () => { index = (player.soundIndex < playlist.length - 1) ? player.soundIndex + 1 : 0
-                                          sound = new Howl ({src: playlist[index].src})
-                                          updateCurrTitle(playlist[index])
-                                          playSelected(sound, index)
+                                          update(playlist[index], index)
                                         })
 prevbtn.addEventListener('click', () => { index = (player.soundIndex > 0) ? player.soundIndex - 1 : playlist.length - 1
-                                          sound = new Howl ({src: playlist[index].src})
-                                          updateCurrTitle(playlist[index])
-                                          playSelected(sound, index)
+                                          update(playlist[index], index)
                                         })
 
 var titleText = document.createTextNode(playlist[0].title)
@@ -46,6 +43,7 @@ function initAudioPlayer() {
     var listItem = createListItem(song,index)
     playlistContainer.appendChild(listItem)
   })
+  playlistContainer.id = 'playlist'
   var parent = document.getElementById('root')
   parent.appendChild(playlistContainer)
 }
@@ -53,23 +51,14 @@ function initAudioPlayer() {
 function createListItem(song, index) {
   var listItem = document.createElement('div')
   var title = document.createTextNode(song.title)
-  var sound = new Howl({
-    src: [song.src],
-    volume: 1,
-  })
   listItem.appendChild(title)
-  listItem.addEventListener('click', () => { updateCurrTitle(song)
-                                             playSelected(sound, index)})
+  listItem.addEventListener('click', () => update(song, index))
   return listItem
 }
 
 function playSelected(sound, index) {
-  if(player.playing === false) {
-    player.playing = true
-  }
-  else {
-    player.sound.pause()
-  }
+  if(player.playing === false) player.playing = true
+  else player.sound.pause()
   player.soundIndex = index
   player.sound = sound
   player.sound.play()
@@ -79,5 +68,19 @@ function updateCurrTitle(song) {
   var title = document.getElementById('title')
   title.innerHTML = song.title
   player.title = song.title
+}
+
+function updateTimeBox () {
+  var mins = Math.floor(player.sound._duration / 60)
+  var secs = Math.floor(player.sound._duration - (mins * 60))
+  duration.innerHTML = mins+':'+secs
+}
+
+function update(song, index) {
+  var sound = new Howl({
+      src: song.src,
+      onload: () => updateTimeBox()})
+      updateCurrTitle(song)
+      playSelected(sound, index)
 }
 window.addEventListener('load', initAudioPlayer)
