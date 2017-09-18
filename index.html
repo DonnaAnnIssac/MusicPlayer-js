@@ -7,16 +7,20 @@
   </head>
   <body>
     <div class="rootContainer" id="root">
-      <div class="controlsContainer">
-        <div class="btn" id="prevBtn"></div>
-        <div class="btn" id="playBtn"></div>
-        <div class="btn" id="pauseBtn"></div>
-        <div class="btn" id="nextBtn"></div>
-      </div>
-      <div class="trackInfo">
-        <div id="title"></div>
-        <div id="timer"></div>
-        <div id="duration"></div>
+      <div class="controlBar">
+        <div class="controlsContainer">
+          <div class="btn" id="prevBtn"></div>
+          <div class="btn" id="playBtn"></div>
+          <div class="btn" id="pauseBtn"></div>
+          <div class="btn" id="nextBtn"></div>
+        </div>
+        <div class="trackInfo">
+          <div id="title"></div>
+          <div id="timebox">
+            <div id="timer">00:00</div>
+            <div id="duration"></div>
+          </div>
+        </div>
       </div>
     </div>
     <script src="src/node_modules/howler/dist/howler.js" type="text/javascript"></script>
