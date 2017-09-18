@@ -14,23 +14,32 @@ var playlist = [{
 var player = {
   sound: new Howl({src: playlist[0].src}),
   soundIndex: 0,
-  playing: false
+  playing: false,
+  title: playlist[0].title
 }
 
 playbtn = document.getElementById('playBtn')
 pausebtn = document.getElementById('pauseBtn')
 prevbtn = document.getElementById('prevBtn')
 nextbtn = document.getElementById('nextBtn')
+trackTitle = document.getElementById('title')
 playbtn.addEventListener('click', () => {player.playing = true;player.sound.play()})
 pausebtn.addEventListener('click', () => {player.playing = false;player.sound.pause()})
 nextbtn.addEventListener('click', () => { index = (player.soundIndex < playlist.length - 1) ? player.soundIndex + 1 : 0
                                           sound = new Howl ({src: playlist[index].src})
+                                          updateCurrTitle(playlist[index])
                                           playSelected(sound, index)
                                         })
 prevbtn.addEventListener('click', () => { index = (player.soundIndex > 0) ? player.soundIndex - 1 : playlist.length - 1
                                           sound = new Howl ({src: playlist[index].src})
+                                          updateCurrTitle(playlist[index])
                                           playSelected(sound, index)
                                         })
+
+var titleText = document.createTextNode(playlist[0].title)
+var parentNode = document.getElementById('title')
+parentNode.appendChild(titleText)
+
 function initAudioPlayer() {
   var playlistContainer = document.createElement('div')
   playlist.forEach( (song, index) => {
@@ -49,7 +58,8 @@ function createListItem(song, index) {
     volume: 1,
   })
   listItem.appendChild(title)
-  listItem.addEventListener('click', () => {playSelected(sound, index)})
+  listItem.addEventListener('click', () => { updateCurrTitle(song)
+                                             playSelected(sound, index)})
   return listItem
 }
 
@@ -65,4 +75,9 @@ function playSelected(sound, index) {
   player.sound.play()
 }
 
+function updateCurrTitle(song) {
+  var title = document.getElementById('title')
+  title.innerHTML = song.title
+  player.title = song.title
+}
 window.addEventListener('load', initAudioPlayer)

@@ -1,3 +1,6 @@
+body {
+  background-color: #e0e0e0;
+}
 .controlsContainer {
   display: flex;
   flex-direction: row;
@@ -10,7 +13,6 @@
   cursor: pointer;
   padding: 20px;
   box-sizing: border-box;
-  /*flex: 1;*/
 }
 .btn:hover {
   opacity: 1.0;
@@ -23,21 +25,25 @@
 #pauseBtn {
   background: url("./images/pause2.png") no-repeat;
   background-size: contain;
-  /*flex: 1;*/
 }
 
 #prevBtn {
   background: url("./images/prev.png") no-repeat;
   background-size: contain;
-  /*flex: 1;*/
 }
 
 #nextBtn {
   background: url("./images/next.png") no-repeat;
   background-size: contain;
-  /*flex: 1;*/
 }
 
 .trackInfo {
-  /*flex: 0;*/
+  background-color: #00695c;
+}
+
+#title {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  font-family: Helvetica;
 }
