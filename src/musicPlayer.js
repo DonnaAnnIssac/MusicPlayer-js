@@ -87,12 +87,12 @@ function updateTrackTime () {
   var totalMins = Math.floor(player.sound._duration / 60)
   var totalSecs = Math.floor(player.sound._duration - (mins * 60))
   var sec = parseInt(secs.innerHTML), min = parseInt(mins.innerHTML)
-  console.log(sec, min);
   var timer = sec;
-  updateTime = setInterval(() => { min = pad(parseInt(timer/60))
-                            sec = pad(timer%60)
-                            mins.innerHTML = min
-                            secs.innerHTML = sec
+  updateTime = setInterval(() => { var newMin = timer/60
+                            var newSec = timer%60
+                            console.log(newMin, typeof newMin, newSec, typeof newSec);
+                            mins.innerHTML = pad(parseInt(min + newMin))
+                            secs.innerHTML = pad(parseInt(newSec))
                             ++timer}, 1000)
 }
 
@@ -124,6 +124,7 @@ function seek(event) {
     console.log(newMins, newSecs);
     mins.innerHTML = newMins
     secs.innerHTML = newSecs
+    clearInterval(updateTime)
     updateTrackTime()
   }
 }
