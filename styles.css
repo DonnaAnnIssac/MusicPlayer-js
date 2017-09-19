@@ -39,6 +39,13 @@ body {
   background-size: cover;
 }
 
+#volume {
+  background: url("./images/volume.png") no-repeat;
+  background-size: cover;
+}
+
+
+
 .trackInfo {
   background-color: #00695c;
 }
@@ -51,7 +58,13 @@ body {
   order: 1;
 }
 
-#timebox {
+.timebox {
+  display: flex;
+  justify-content: center;
+  margin-left: 15px;
+}
+
+#timer {
   display: flex;
   justify-content: center;
 }

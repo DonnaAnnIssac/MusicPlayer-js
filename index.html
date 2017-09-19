@@ -13,12 +13,22 @@
           <div class="btn" id="playBtn"></div>
           <div class="btn" id="pauseBtn"></div>
           <div class="btn" id="nextBtn"></div>
+          <div class="btn" id="volume"></div>
+          <div>
+            <input type="range" id="volumeSlider" min="0" max="100" value="100" step="1">
+          </div>
         </div>
         <div class="trackInfo">
           <div id="title"></div>
-          <div id="timebox">
-            <div id="timer">00:00</div>
-            <div id="duration"></div>
+          <div class="timebox">
+            <div class="timebox" id="timer">
+              <div id="mins">00</div>:
+              <div id="secs">00</div>
+            </div>
+            <div class="timebox">
+              <input type="range" id="seekSlider" min="0" max="100" value="0" step="1">
+            </div>
+            <div class="timebox" id="duration"></div>
           </div>
         </div>
       </div>
