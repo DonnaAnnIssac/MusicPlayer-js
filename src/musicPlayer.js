@@ -12,18 +12,7 @@ var playlist = [{
 }]
 
 var player = {
-  sound: new Howl({src: playlist[0].src,
-                   onload: () => updateTrackDuration(),
-                   onplay: () => {player.playing = true
-                                  updateTrackTime()},
-                   onend: () => {clearInterval(updateTime)},
-                   onpause: () => {player.playing = false},
-                   onmute: () => {volbtn.style.background = (player.sound._muted) ?
-                                  "url(./images/mute.png) no-repeat" :
-                                  "url(./images/volume.png) no-repeat"
-                                  volbtn.style.backgroundSize = "cover"
-                                  }
-                 }),
+  sound: createHowlObject(playlist[0]),
   soundIndex: 0,
   playing: false,
   title: playlist[0].title,
@@ -95,7 +84,6 @@ function updateTrackDuration () {
 }
 
 function updateTrackTime () {
-  clearInterval(updateTime)
   var totalMins = Math.floor(player.sound._duration / 60)
   var totalSecs = Math.floor(player.sound._duration - (mins * 60))
   var sec = parseInt(secs.innerHTML), min = parseInt(mins.innerHTML)
@@ -111,12 +99,10 @@ function updateTrackTime () {
 function pad (val) { return val > 9 ? val : "0" + val }
 
 function update(song, index) {
-  var sound = new Howl({
-      src: song.src,
-      onload: () => updateTrackDuration(),
-      onplay: () => {updateTrackTime()}})
-      updateCurrTitle(song)
-      playSelected(sound, index)
+  var sound = createHowlObject(song)
+  updateCurrTitle(song)
+  resetTimer()
+  playSelected(sound, index)
 }
 
 function muteUnmuteSound() {
@@ -144,5 +130,25 @@ function seek(event) {
 
 function setVolume() {
   player.sound.volume(volumeslider.value/100)
+}
+
+function resetTimer() {
+  clearInterval(updateTime)
+  mins.innerHTML = "00"
+  secs.innerHTML = "00"
+}
+
+function createHowlObject(song) {
+ return new Howl({src: song.src,
+                  onload: () => updateTrackDuration(),
+                  onplay: () => {player.playing = true
+                  updateTrackTime()},
+                  onend: () => { resetTimer()},
+                  onpause: () => {player.playing = false
+                  clearInterval(updateTime)},
+                  onmute: () => {volbtn.style.background = (player.sound._muted) ?
+                  "url(./images/mute.png) no-repeat" :
+                  "url(./images/volume.png) no-repeat"
+                  volbtn.style.backgroundSize = "cover"} })
 }
 window.addEventListener('load', initAudioPlayer)
