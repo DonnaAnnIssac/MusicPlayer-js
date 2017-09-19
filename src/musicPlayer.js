@@ -65,7 +65,7 @@ function createListItem(song, index) {
 
 function playSelected(sound, index) {
   if(player.playing === false) player.playing = true
-  else player.sound.pause()
+  else player.sound.stop()
   player.soundIndex = index
   player.sound = sound
   player.sound.play()
@@ -90,7 +90,6 @@ function updateTrackTime () {
   var timer = sec;
   updateTime = setInterval(() => { var newMin = timer/60
                             var newSec = timer%60
-                            console.log(newMin, typeof newMin, newSec, typeof newSec);
                             mins.innerHTML = pad(parseInt(min + newMin))
                             secs.innerHTML = pad(parseInt(newSec))
                             ++timer}, 1000)
@@ -119,15 +118,17 @@ function seek(event) {
   if(player.seeking) {
     seeker.value = event.clientX - seeker.offsetLeft;
     var seekto = player.sound._duration * (seeker.value / 100);
-    var newMins = pad(Math.floor(seekto / 60))
-    var newSecs = pad(Math.floor(seekto - (newMins * 60)))
-    console.log(newMins, newSecs);
+    newMins = pad(Math.floor(seekto / 60))
+    newSecs = pad(Math.floor(seekto - (newMins * 60)))
     mins.innerHTML = newMins
     secs.innerHTML = newSecs
     clearInterval(updateTime)
     updateTrackTime()
+    player.sound.seek(seekto)
   }
 }
+
+
 
 function setVolume() {
   player.sound.volume(volumeslider.value/100)
@@ -141,15 +142,18 @@ function resetTimer() {
 
 function createHowlObject(song) {
  return new Howl({src: song.src,
-                  onload: () => updateTrackDuration(),
+                  onload: () => {updateTrackDuration()
+                    seeker.value = 0},
                   onplay: () => {player.playing = true
-                  updateTrackTime()},
-                  onend: () => { resetTimer()},
+                    updateTrackTime()},
+                  onstop: () => {player.playing = false},
+                  onend: () => {resetTimer()},
                   onpause: () => {player.playing = false
-                  clearInterval(updateTime)},
+                    clearInterval(updateTime)},
                   onmute: () => {volbtn.style.background = (player.sound._muted) ?
-                  "url(./images/mute.png) no-repeat" :
-                  "url(./images/volume.png) no-repeat"
-                  volbtn.style.backgroundSize = "cover"} })
+                    "url(./images/mute.png) no-repeat" :
+                    "url(./images/volume.png) no-repeat"
+                    volbtn.style.backgroundSize = "cover"} })
 }
+
 window.addEventListener('load', initAudioPlayer)
