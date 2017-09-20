@@ -45,14 +45,14 @@ var parentNode = document.getElementById('title')
 parentNode.appendChild(titleText)
 
 function initAudioPlayer() {
-  var playlistContainer = document.createElement('div')
+  var playlistItems = document.createElement('div')
   playlist.forEach( (song, index) => {
     var listItem = createListItem(song,index)
-    playlistContainer.appendChild(listItem)
+    playlistItems.appendChild(listItem)
   })
-  playlistContainer.id = 'playlist'
-  var parent = document.getElementById('root')
-  parent.appendChild(playlistContainer)
+  playlistItems.id = 'playlist'
+  var parent = document.getElementById('playlistContainer')
+  parent.appendChild(playlistItems)
 }
 
 function createListItem(song, index) {
@@ -91,8 +91,11 @@ function updateTimeAndSeek () {
                             var newSec = sec%60
                             mins.innerHTML = pad(parseInt(min + newMin))
                             secs.innerHTML = pad(parseInt(newSec + 1))
+                            console.log(parseFloat(seeker.value))
+                            console.log(parseFloat(player.sound._duration/100))
+                            seeker.value = parseFloat((player.sound._duration * sec/100).toFixed(3))
+                            console.log(seeker.value)
                             ++sec
-                            seeker.value = parseFloat(seeker.value) + parseFloat(100/player.sound._duration)
                           }, 1000)
 }
 

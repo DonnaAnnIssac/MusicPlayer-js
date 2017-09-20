@@ -1,4 +1,4 @@
-body {
+html, body, .rootContainer {
   background-color: #e0e0e0;
   height: 100%;
   margin: 0;
@@ -6,65 +6,124 @@ body {
 .controlsContainer {
   display: flex;
   flex-direction: row;
-  justify-content: center;
   background-color: #003d33;
 }
 .btn {
+  flex-grow: 5;
+  display: flex;
   outline: none;
   opacity: 0.9;
   cursor: pointer;
   padding: 20px;
+  width: 6em;
   box-sizing: border-box;
 }
 .btn:hover {
   opacity: 1.0;
 }
-
+.volCtrls {
+  flex-grow: 1;
+  display: flex;
+  opacity: 0.9;
+  padding: 20px;
+}
+.search {
+  flex-grow: 1;
+  display: flex;
+  opacity: 0.9;
+  padding: 20px;
+}
+#searchForm {
+  flex-grow: 2;
+  padding: 20px;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  border-radius: 5px;
+  align-content: center;
+}
+#searchInput {
+  outline: none;
+  width: 100%;
+  border: none;
+  border-radius: 15px;
+  padding: 6px 15px;
+  box-sizing: border-box;
+  opacity: 0.9;
+}
+#searchInput:hover {
+  opacity: 1.0;
+}
+#searchInput:active {
+  opacity: 1.0;
+}
 #playBtn {
   background: url("./images/play2.png") no-repeat;
-  background-size: cover;
+  background-size: contain;
 }
 #pauseBtn {
   background: url("./images/pause2.png") no-repeat;
-  background-size: cover;
+  background-size: contain;
 }
-
 #prevBtn {
-  background: url("./images/prev.png") no-repeat;
-  background-size: cover;
+  background: url("./images/previous.png") no-repeat;
+  background-size: contain;
 }
-
 #nextBtn {
   background: url("./images/next.png") no-repeat;
-  background-size: cover;
+  background-size: contain;
 }
-
 #volume {
   background: url("./images/volume.png") no-repeat;
-  background-size: cover;
+  background-size: contain;
+  flex-grow: 1;
 }
-
-
-
+#searchIcon {
+  background: url("./images/search.png") no-repeat;
+  background-size: contain;
+  flex-grow: 1;
+}
+#volumeSlider {
+  padding: 0px;
+  flex-grow: 2;
+  overflow: hidden;
+}
 .trackInfo {
+  display: flex;
   background-color: #00695c;
+  font-family: sans-serif;
+  color: aliceblue;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 4px 0px 4px 0px;
 }
 
 #title {
-  display: flex;
   width: 100%;
-  justify-content: center;
-  font-family: Helvetica;
-  order: 1;
+  padding: 2px;
 }
-
-.timebox {
+#timebox {
+  width: 100%;
   display: flex;
   justify-content: center;
-  margin-left: 15px;
 }
-
 #timer {
   display: flex;
-  justify-content: center;
+  flex-grow: 1;
+  padding: 5px;
+  margin-right: 5px;
+  justify-content: flex-end;
+}
+
+#duration {
+  flex-grow: 1;
+  justify-content: flex-start;
+  padding: 5px;
+  margin-left: 5px;
+}
+
+#seekSlider {
+  flex-grow: 5;
+}
+#playlistContainer {
+  height: 74%;
 }
