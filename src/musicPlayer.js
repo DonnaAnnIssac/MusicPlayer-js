@@ -83,16 +83,17 @@ function updateTrackDuration () {
   duration.innerHTML = mins+':'+secs
 }
 
-function updateTrackTime () {
+function updateTimeAndSeek () {
   var totalMins = Math.floor(player.sound._duration / 60)
   var totalSecs = Math.floor(player.sound._duration - (mins * 60))
-  var sec = parseInt(secs.innerHTML), min = parseInt(mins.innerHTML)
-  var timer = sec;
-  updateTime = setInterval(() => { var newMin = timer/60
-                            var newSec = timer%60
+  var sec = parseFloat(secs.innerHTML), min = parseFloat(mins.innerHTML)
+  updateTime = setInterval(() => { var newMin = sec/60
+                            var newSec = sec%60
                             mins.innerHTML = pad(parseInt(min + newMin))
-                            secs.innerHTML = pad(parseInt(newSec))
-                            ++timer}, 1000)
+                            secs.innerHTML = pad(parseInt(newSec + 1))
+                            ++sec
+                            seeker.value = parseFloat(seeker.value) + parseFloat(100/player.sound._duration)
+                          }, 1000)
 }
 
 function pad (val) { return val > 9 ? val : "0" + val }
@@ -123,7 +124,7 @@ function seek(event) {
     mins.innerHTML = newMins
     secs.innerHTML = newSecs
     clearInterval(updateTime)
-    updateTrackTime()
+    updateTimeAndSeek()
     player.sound.seek(seekto)
   }
 }
@@ -145,7 +146,7 @@ function createHowlObject(song) {
                   onload: () => {updateTrackDuration()
                     seeker.value = 0},
                   onplay: () => {player.playing = true
-                    updateTrackTime()},
+                    updateTimeAndSeek()},
                   onstop: () => {player.playing = false},
                   onend: () => {resetTimer()},
                   onpause: () => {player.playing = false
