@@ -16,7 +16,8 @@ var player = {
   soundIndex: 0,
   playing: false,
   title: playlist[0].title,
-  seeking: false
+  seeking: false,
+  volume: 1
 }
 
 playbtn = document.getElementById('playBtn')
@@ -27,7 +28,7 @@ volbtn = document.getElementById('volume')
 seeker = document.getElementById('seekSlider')
 volumeslider = document.getElementById("volumeSlider")
 
-playbtn.addEventListener('click', () => {player.sound.play()})
+playbtn.addEventListener('click', () => {if(!player.playing) player.sound.play()})
 pausebtn.addEventListener('click', () => {player.sound.pause()})
 nextbtn.addEventListener('click', () => { index = (player.soundIndex < playlist.length - 1) ? player.soundIndex + 1 : 0
                                           update(playlist[index], index)})
@@ -50,6 +51,7 @@ function initAudioPlayer() {
     var listItem = createListItem(song,index)
     playlistItems.appendChild(listItem)
   })
+  playlistItems.className = 'trackDisplay'
   playlistItems.id = 'playlist'
   var parent = document.getElementById('playlistContainer')
   parent.appendChild(playlistItems)
@@ -59,6 +61,7 @@ function createListItem(song, index) {
   var listItem = document.createElement('div')
   var title = document.createTextNode(song.title)
   listItem.appendChild(title)
+  listItem.className = 'trackDisplay'
   listItem.addEventListener('click', () => update(song, index))
   return listItem
 }
@@ -91,10 +94,7 @@ function updateTimeAndSeek () {
                             var newSec = sec%60
                             mins.innerHTML = pad(parseInt(min + newMin))
                             secs.innerHTML = pad(parseInt(newSec + 1))
-                            console.log(parseFloat(seeker.value))
-                            console.log(parseFloat(player.sound._duration/100))
                             seeker.value = parseFloat((player.sound._duration * sec/100).toFixed(3))
-                            console.log(seeker.value)
                             ++sec
                           }, 1000)
 }
@@ -135,7 +135,8 @@ function seek(event) {
 
 
 function setVolume() {
-  player.sound.volume(volumeslider.value/100)
+  player.volume = volumeslider.value/100
+  player.sound.volume(player.volume)
 }
 
 function resetTimer() {
@@ -149,6 +150,7 @@ function createHowlObject(song) {
                   onload: () => {updateTrackDuration()
                     seeker.value = 0},
                   onplay: () => {player.playing = true
+                    setVolume()
                     updateTimeAndSeek()},
                   onstop: () => {player.playing = false},
                   onend: () => {resetTimer()},
@@ -157,7 +159,7 @@ function createHowlObject(song) {
                   onmute: () => {volbtn.style.background = (player.sound._muted) ?
                     "url(./images/mute.png) no-repeat" :
                     "url(./images/volume.png) no-repeat"
-                    volbtn.style.backgroundSize = "cover"} })
+                    volbtn.style.backgroundSize = "contain"} })
 }
 
 window.addEventListener('load', initAudioPlayer)
