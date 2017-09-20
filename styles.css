@@ -1,9 +1,12 @@
 html, body, .rootContainer {
-  background-color: #e0e0e0;
+  background-color: #cfd8dc;
   height: 100%;
   margin: 0;
+  /*display: flex;
+  flex-wrap: wrap;*/
 }
 .controlsContainer {
+  width: 100%;
   display: flex;
   flex-direction: row;
   background-color: #003d33;
@@ -31,7 +34,7 @@ html, body, .rootContainer {
   flex-grow: 1;
   display: flex;
   opacity: 0.9;
-  padding: 20px;
+  padding: 10px;
 }
 #searchForm {
   flex-grow: 2;
@@ -87,6 +90,15 @@ html, body, .rootContainer {
   flex-grow: 2;
   overflow: hidden;
 }
+.playlist {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  font-family: sans-serif;
+  flex-direction: column;
+  height: 75.75%;
+}
+
 .trackInfo {
   display: flex;
   background-color: #00695c;
@@ -123,7 +135,4 @@ html, body, .rootContainer {
 
 #seekSlider {
   flex-grow: 5;
-}
-#playlistContainer {
-  height: 74%;
 }
