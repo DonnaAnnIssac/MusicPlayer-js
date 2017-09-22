@@ -56,12 +56,15 @@ html, body, .rootContainer {
 #searchInput:hover {
   opacity: 1.0;
 }
-#searchInput:active {
+#searchInput:focus {
   opacity: 1.0;
 }
 #playBtn {
   background: url("./images/play2.png") no-repeat;
   background-size: contain;
+}
+#playBtn:focus {
+  opacity: 1.0;
 }
 #pauseBtn {
   background: url("./images/pause2.png") no-repeat;
@@ -73,6 +76,14 @@ html, body, .rootContainer {
 }
 #nextBtn {
   background: url("./images/next.png") no-repeat;
+  background-size: contain;
+}
+#shuffle {
+  background: url("./images/shuffle.png") no-repeat;
+  background-size: contain;
+}
+#repeat {
+  background: url("./images/repeat.png") no-repeat;
   background-size: contain;
 }
 #volume {

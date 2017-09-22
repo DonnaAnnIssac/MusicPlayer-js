@@ -17,23 +17,36 @@ var player = {
   playing: false,
   title: playlist[0].title,
   seeking: false,
-  volume: 1
+  volume: 1,
+  shuffle: false,
+  repeat: false
 }
 
 playbtn = document.getElementById('playBtn')
 pausebtn = document.getElementById('pauseBtn')
 prevbtn = document.getElementById('prevBtn')
 nextbtn = document.getElementById('nextBtn')
+shufflebtn = document.getElementById('shuffle')
+repeatbtn = document.getElementById('repeat')
 volbtn = document.getElementById('volume')
 seeker = document.getElementById('seekSlider')
 volumeslider = document.getElementById("volumeSlider")
 
-playbtn.addEventListener('click', () => {if(!player.playing) player.sound.play()})
-pausebtn.addEventListener('click', () => {player.sound.pause()})
-nextbtn.addEventListener('click', () => { index = (player.soundIndex < playlist.length - 1) ? player.soundIndex + 1 : 0
-                                          update(playlist[index], index)})
-prevbtn.addEventListener('click', () => { index = (player.soundIndex > 0) ? player.soundIndex - 1 : playlist.length - 1
-                                          update(playlist[index], index)})
+playbtn.addEventListener('click', () => { if(!player.playing) player.sound.play()})
+pausebtn.addEventListener('click', () => { player.sound.pause()})
+nextbtn.addEventListener('click', () => { if(player.shuffle) shufflePlaylist()
+                                          else {
+                                          index = (player.soundIndex < playlist.length - 1) ? player.soundIndex + 1 : 0
+                                          update(playlist[index], index)} })
+prevbtn.addEventListener('click', () => { if(player.shuffle) shufflePlaylist()
+                                          else {
+                                          index = (player.soundIndex > 0) ? player.soundIndex - 1 : playlist.length - 1
+                                          update(playlist[index], index)} })
+shufflebtn.addEventListener('click', () => { player.shuffle = (player.shuffle) ? false : true
+                                            if(!player.playing) shufflePlaylist()})
+repeatbtn.addEventListener('click', () => { player.repeat = (player.repeat) ? false : true
+                                            console.log(player.repeat);
+                                            player.sound.loop = (player.repeat) ? true : false })
 volbtn.addEventListener('click', () => muteUnmuteSound())
 seeker.addEventListener('mousedown', (event) => { player.seeking = true
                                                   seek(event)})
@@ -87,14 +100,12 @@ function updateTrackDuration () {
 }
 
 function updateTimeAndSeek () {
-  var totalMins = Math.floor(player.sound._duration / 60)
-  var totalSecs = Math.floor(player.sound._duration - (mins * 60))
   var sec = parseFloat(secs.innerHTML), min = parseFloat(mins.innerHTML)
   updateTime = setInterval(() => { var newMin = sec/60
                             var newSec = sec%60
                             mins.innerHTML = pad(parseInt(min + newMin))
                             secs.innerHTML = pad(parseInt(newSec + 1))
-                            seeker.value = parseFloat((player.sound._duration * sec/100).toFixed(3))
+                            seeker.value = parseFloat((player.sound._duration * sec/100).toFixed(3)) //FIX THIS!!
                             ++sec
                           }, 1000)
 }
@@ -134,6 +145,7 @@ function seek(event) {
 
 
 
+
 function setVolume() {
   player.volume = volumeslider.value/100
   player.sound.volume(player.volume)
@@ -153,7 +165,9 @@ function createHowlObject(song) {
                     setVolume()
                     updateTimeAndSeek()},
                   onstop: () => {player.playing = false},
-                  onend: () => {resetTimer()},
+                  onend: () => {player.playing = false
+                    resetTimer()
+                    if(player.shuffle) shufflePlaylist()},
                   onpause: () => {player.playing = false
                     clearInterval(updateTime)},
                   onmute: () => {volbtn.style.background = (player.sound._muted) ?
@@ -162,4 +176,8 @@ function createHowlObject(song) {
                     volbtn.style.backgroundSize = "contain"} })
 }
 
+function shufflePlaylist() {
+  var index = Math.floor(Math.random() * (playlist.length))
+  update(playlist[index], index)
+}
 window.addEventListener('load', initAudioPlayer)
