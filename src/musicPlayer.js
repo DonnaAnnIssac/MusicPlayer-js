@@ -149,12 +149,10 @@ function muteUnmuteSound() {
 
 function seek(event) {
   if(player.seeking) {
-    seeker.value = parseFloat((event.clientX - seeker.offsetLeft)/100)
-    console.log(seeker.value);
-    // var seekto = player.sound._duration * ((event.clientX - seeker.offsetLeft) / 100)
+    var secPerPixel = player.sound._duration/seeker.offsetWidth
+    seeker.value = parseFloat((event.clientX - seeker.offsetLeft) * secPerPixel)
     newMins = pad(Math.floor(parseFloat(seeker.value) / 60))
     newSecs = pad(Math.floor(parseFloat(seeker.value) - (newMins * 60)))
-    console.log(newMins, newSecs);
     mins.innerHTML = newMins
     secs.innerHTML = newSecs
     clearInterval(updateTime)
