@@ -52,7 +52,7 @@ volbtn = document.getElementById('volume')
 seeker = document.getElementById('seekSlider')
 volumeslider = document.getElementById("volumeSlider")
 
-playbtn.addEventListener('click', () => if(!player.playing) player.sound.play() )
+playbtn.addEventListener('click', () => { if(!player.playing) player.sound.play() } )
 pausebtn.addEventListener('click', () => player.sound.pause() )
 nextbtn.addEventListener('click', () => { if(player.shuffle) shufflePlaylist()
                                           else {
@@ -118,12 +118,13 @@ function updateTrackDuration () {
 }
 
 function updateTimeAndSeek () {
-  var sec = parseFloat(secs.innerHTML), min = parseFloat(mins.innerHTML)
+  seeker.max = player.sound._duration
+  var sec = parseFloat(secs.innerHTML) + 1, min = parseFloat(mins.innerHTML)
   updateTime = setInterval(() => { var newMin = sec/60
     var newSec = sec%60
     mins.innerHTML = pad(parseInt(min + newMin))
-    secs.innerHTML = pad(parseInt(newSec + 1))
-    seeker.value = parseFloat((player.sound._duration * sec/100).toFixed(3)) //FIX THIS!!
+    secs.innerHTML = pad(parseInt(newSec))
+    seeker.value = parseFloat(seeker.value) + 1
     sec++ }, 1000)
 }
 
@@ -145,18 +146,20 @@ function muteUnmuteSound() {
     player.sound.mute(player.sound._muted)
   }
 }
-//FIX THIS!!!
+
 function seek(event) {
   if(player.seeking) {
-    seeker.value = event.clientX - seeker.offsetLeft;
-    var seekto = player.sound._duration * (seeker.value / 100);
-    newMins = pad(Math.floor(seekto / 60))
-    newSecs = pad(Math.floor(seekto - (newMins * 60)))
+    seeker.value = parseFloat((event.clientX - seeker.offsetLeft)/100)
+    console.log(seeker.value);
+    // var seekto = player.sound._duration * ((event.clientX - seeker.offsetLeft) / 100)
+    newMins = pad(Math.floor(parseFloat(seeker.value) / 60))
+    newSecs = pad(Math.floor(parseFloat(seeker.value) - (newMins * 60)))
+    console.log(newMins, newSecs);
     mins.innerHTML = newMins
     secs.innerHTML = newSecs
     clearInterval(updateTime)
     updateTimeAndSeek()
-    player.sound.seek(seekto)
+    player.sound.seek(seeker.value)
   }
 }
 
