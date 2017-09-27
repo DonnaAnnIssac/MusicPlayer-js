@@ -2,8 +2,6 @@ html, body, .rootContainer {
   background-color: #cfd8dc;
   height: 100%;
   margin: 0;
-  /*display: flex;
-  flex-wrap: wrap;*/
 }
 .controlsContainer {
   width: 100%;
@@ -36,20 +34,15 @@ html, body, .rootContainer {
   opacity: 0.9;
   padding: 10px;
 }
-#searchForm {
-  flex-grow: 2;
-  padding: 20px;
-  justify-content: flex-end;
-  box-sizing: border-box;
-  border-radius: 5px;
-  align-content: center;
-}
+
 #searchInput {
+  flex-grow: 1;
+  justify-content: flex-end;
+  align-content: center;
   outline: none;
-  width: 100%;
   border: none;
   border-radius: 15px;
-  padding: 6px 15px;
+  padding: 0px 15px;
   box-sizing: border-box;
   opacity: 0.9;
 }
@@ -145,5 +138,6 @@ html, body, .rootContainer {
 }
 
 #seekSlider {
+  /*width: 90%;*/
   flex-grow: 5;
 }

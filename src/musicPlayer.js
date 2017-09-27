@@ -1,47 +1,3 @@
-function createHowlObject(song) {
- return new Howl({ src: song.src,
-  onload: () => { updateTrackDuration()
-    seeker.value = 0 },
-  onplay: () => { player.playing = true
-    setVolume()
-    updateTimeAndSeek() },
-  onstop: () => player.playing = false,
-  onend: () => { player.playing = false
-    resetTimer()
-    if(player.shuffle) shufflePlaylist()
-    if(player.repeat) { player.sound = createHowlObject(playlist[player.soundIndex])
-      player.sound.play()} },
-  onpause: () => { player.playing = false
-      clearInterval(updateTime) },
-  onmute: () => { volbtn.style.background = (player.sound._muted) ?
-    "url(./images/mute.png) no-repeat" : "url(./images/volume.png) no-repeat"
-    volbtn.style.backgroundSize = "contain" } })
-}
-
-var playlist = [{
-  title: 'Dance of death',
-  src: 'music/danceofdeath.mp3'
-},
-{
-  title: 'Paint it Black',
-  src: 'music/paint-it-black.mp3'
-},
-{
-  title: 'Satisfaction',
-  src: 'music/Satisfaction.mp3'
-}]
-
-var player = {
-  sound: createHowlObject(playlist[0]),
-  soundIndex: 0,
-  playing: false,
-  title: playlist[0].title,
-  seeking: false,
-  volume: 1,
-  shuffle: false,
-  repeat: false
-}
-
 playbtn = document.getElementById('playBtn')
 pausebtn = document.getElementById('pauseBtn')
 prevbtn = document.getElementById('prevBtn')
@@ -51,6 +7,7 @@ repeatbtn = document.getElementById('repeat')
 volbtn = document.getElementById('volume')
 seeker = document.getElementById('seekSlider')
 volumeslider = document.getElementById("volumeSlider")
+searchInput = document.getElementById('searchInput')
 
 playbtn.addEventListener('click', () => { if(!player.playing) player.sound.play() } )
 pausebtn.addEventListener('click', () => player.sound.pause() )
@@ -72,30 +29,6 @@ seeker.addEventListener('mousemove', (event) => seek(event))
 seeker.addEventListener('mouseup', () => player.seeking = false)
 volumeslider.addEventListener('mousemove', setVolume)
 var updateTime
-
-function initAudioPlayer() {
-  var playlistItems = document.createElement('div') //creating main playlist div
-  playlist.forEach( (song, index) => {
-    var listItem = createListItem(song,index)
-    playlistItems.appendChild(listItem)
-  })
-  playlistItems.className = 'trackDisplay'
-  playlistItems.id = 'playlist'
-  var parent = document.getElementById('playlistContainer')
-  parent.appendChild(playlistItems)
-  var titleText = document.createTextNode(playlist[0].title)
-  var parentNode = document.getElementById('title')
-  parentNode.appendChild(titleText)
-}
-//creating sub divs to hold info of each track
-function createListItem(song, index) {
-  var listItem = document.createElement('div')
-  var title = document.createTextNode(song.title)
-  listItem.appendChild(title)
-  listItem.className = 'trackDisplay'
-  listItem.addEventListener('click', () => update(song, index))
-  return listItem
-}
 
 function playSelected(sound, index) {
   if(player.playing === false) player.playing = true
@@ -176,6 +109,85 @@ function resetTimer() {
 function shufflePlaylist() {
   var index = Math.floor(Math.random() * (playlist.length))
   update(playlist[index], index)
+}
+
+function search() {
+  var filter = searchInput.value.toUpperCase()
+  var lis = document.getElementsByTagName('li')
+  for(let i = 0; i < lis.length; i++) {
+    var name = lis[i].innerHTML
+    lis[i].style.display = (name.toUpperCase().indexOf(filter) == 0) ? 'list-item' : 'none'
+  }
+}
+
+function createHowlObject(song) {
+ return new Howl({ src: song.src,
+  onload: () => { updateTrackDuration()
+    seeker.value = 0 },
+  onplay: () => { player.playing = true
+    setVolume()
+    updateTimeAndSeek() },
+  onstop: () => player.playing = false,
+  onend: () => { player.playing = false
+    resetTimer()
+    if(player.shuffle) shufflePlaylist()
+    if(player.repeat) { player.sound = createHowlObject(playlist[player.soundIndex])
+      player.sound.play()} },
+  onpause: () => { player.playing = false
+      clearInterval(updateTime) },
+  onmute: () => { volbtn.style.background = (player.sound._muted) ?
+    "url(./images/mute.png) no-repeat" : "url(./images/volume.png) no-repeat"
+    volbtn.style.backgroundSize = "contain" } })
+}
+
+var playlist = [{
+  title: 'Dance of death',
+  src: 'music/danceofdeath.mp3'
+},
+{
+  title: 'Paint it Black',
+  src: 'music/paint-it-black.mp3'
+},
+{
+  title: 'Satisfaction',
+  src: 'music/Satisfaction.mp3'
+}]
+
+var player = {
+  sound: createHowlObject(playlist[0]),
+  soundIndex: 0,
+  playing: false,
+  title: playlist[0].title,
+  seeking: false,
+  volume: 1,
+  shuffle: false,
+  repeat: false
+}
+
+//creating sub divs to hold info of each track
+function createListItem(song, index) {
+  var listItem = document.createElement('li')
+  var title = document.createTextNode(song.title)
+  listItem.appendChild(title)
+  listItem.className = 'playlist'
+  listItem.addEventListener('click', () => update(song, index))
+  return listItem
+}
+
+function initAudioPlayer() {
+  var playlistItems = document.createElement('ul') //creating main playlist
+  playlist.forEach( (song, index) => {
+    var listItem = createListItem(song,index)
+    playlistItems.appendChild(listItem)
+  })
+  playlistItems.className = 'playlist'
+  playlistItems.id = 'list'
+  playlistItems.style.listStyleType = 'none'
+  var parent = document.getElementById('playlistContainer')
+  parent.appendChild(playlistItems)
+  var titleText = document.createTextNode(playlist[0].title)
+  var parentNode = document.getElementById('title')
+  parentNode.appendChild(titleText)
 }
 
 window.addEventListener('load', initAudioPlayer)
