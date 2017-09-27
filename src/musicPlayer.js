@@ -116,7 +116,7 @@ function search() {
   var lis = document.getElementsByTagName('li')
   for(let i = 0; i < lis.length; i++) {
     var name = lis[i].innerHTML
-    lis[i].style.display = (name.toUpperCase().indexOf(filter) == 0) ? 'list-item' : 'none'
+    lis[i].style.display = (name.toUpperCase().indexOf(filter) !== -1) ? 'list-item' : 'none'
   }
 }
 
