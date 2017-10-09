@@ -1,0 +1,24 @@
+{
+  "name": "musicPlayer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DonnaAnnIssac/MusicPlayer-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DonnaAnnIssac/MusicPlayer-js/issues"
+  },
+  "homepage": "https://github.com/DonnaAnnIssac/MusicPlayer-js#readme",
+  "dependencies": {
+    "express": "^4.16.1"
+  }
+}
