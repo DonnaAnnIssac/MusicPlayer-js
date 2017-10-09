@@ -142,15 +142,15 @@ function createHowlObject(song) {
 
 var playlist = [{
   title: 'Dance of death',
-  src: 'music/danceofdeath.mp3'
+  src: 'http://localhost:8000/music/danceofdeath.mp3'
 },
 {
   title: 'Paint it Black',
-  src: 'music/paint-it-black.mp3'
+  src: 'http://localhost:8000/music/paint-it-black.mp3'
 },
 {
   title: 'Satisfaction',
-  src: 'music/Satisfaction.mp3'
+  src: 'http://localhost:8000/music/Satisfaction.mp3'
 }]
 
 var player = {
