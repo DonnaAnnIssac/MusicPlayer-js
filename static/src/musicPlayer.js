@@ -28,7 +28,7 @@ seeker.addEventListener('mousedown', (event) => { player.seeking = true
 seeker.addEventListener('mousemove', (event) => seek(event))
 seeker.addEventListener('mouseup', () => player.seeking = false)
 volumeslider.addEventListener('mousemove', setVolume)
-var updateTime
+var updateTime,library = [], player = {}
 
 function playSelected(sound, index) {
   if(player.playing === false) player.playing = true
@@ -129,17 +129,11 @@ function makeRequest() {
 
 function addToLibrary(resp) {
   resp = JSON.parse(resp)
-  var track = {}
-  track["title"] = resp[0].title
-  track["src"] = resp[0].stream_url+"?client_id=08820572-567e-4aeb-9e3c-61e029d82a46"
-  library.push(track)
-  // resp.forEach(function(item) {
-  //   var track = {}
-  //   track["title"] = item.title
-  //   track["src"] = item.stream_url
-  //   library.push(track)
-  // })
-  console.log(library) 
+  for(let i = 0; i < 5; i++) {
+  let track = {}
+  track["title"] = resp[i].title
+  track["src"] = resp[i].stream_url+"?client_id=08820572-567e-4aeb-9e3c-61e029d82a46"
+  library.push(track) }
 }
 
 function createHowlObject(song) {
@@ -168,30 +162,17 @@ function createHowlObject(song) {
                 })
 }
 
-var library = [
-    {
-    title: 'Dance of death',
-    src: 'http://localhost:8000/music/danceofdeath.mp3'
-  },
-  {
-    title: 'Paint it Black',
-    src: 'http://localhost:8000/music/paint-it-black.mp3'
-  },
-  {
-    title: 'Satisfaction',
-    src: 'http://localhost:8000/music/Satisfaction.mp3'
+function initPlayerState() {
+  return {
+    sound: createHowlObject(library[0]),
+    soundIndex: 0,
+    playing: false,
+    title: library[0].title,
+    seeking: false,
+    volume: 1,
+    shuffle: false,
+    repeat: false
   }
-]
-
-var player = {
-  sound: createHowlObject(library[0]),
-  soundIndex: 0,
-  playing: false,
-  title: library[0].title,
-  seeking: false,
-  volume: 1,
-  shuffle: false,
-  repeat: false
 }
 
 //creating sub divs to hold info of each track
@@ -205,17 +186,18 @@ function createListItem(song, index) {
 }
 
 function initAudioPlayer() {
-  var playlistItems = document.createElement('ul') //creating main playlist
+  var libraryItems = document.createElement('ul') //creating library container
   makeRequest()
-  library.forEach( (song, index) => {
+  library.forEach((song, index) => {
     var listItem = createListItem(song,index)
-    playlistItems.appendChild(listItem)
+    libraryItems.appendChild(listItem)
   })
-  playlistItems.className = 'playlist'
-  playlistItems.id = 'list'
-  playlistItems.style.listStyleType = 'none'
+  libraryItems.className = 'playlist'
+  libraryItems.id = 'list'
+  libraryItems.style.listStyleType = 'none'
+  player = initPlayerState()
   var parent = document.getElementById('playlistContainer')
-  parent.appendChild(playlistItems)
+  parent.appendChild(libraryItems)
   var titleText = document.createTextNode(library[0].title)
   var parentNode = document.getElementById('title')
   parentNode.appendChild(titleText)
