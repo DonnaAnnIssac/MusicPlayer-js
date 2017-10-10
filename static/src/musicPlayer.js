@@ -13,12 +13,12 @@ playbtn.addEventListener('click', () => { if(!player.playing) player.sound.play(
 pausebtn.addEventListener('click', () => player.sound.pause() )
 nextbtn.addEventListener('click', () => { if(player.shuffle) shufflePlaylist()
                                           else {
-                                          index = (player.soundIndex < playlist.length - 1) ? player.soundIndex + 1 : 0
-                                          update(playlist[index], index)} })
+                                          index = (player.soundIndex < library.length - 1) ? player.soundIndex + 1 : 0
+                                          update(library[index], index)} })
 prevbtn.addEventListener('click', () => { if(player.shuffle) shufflePlaylist()
                                           else {
-                                          index = (player.soundIndex > 0) ? player.soundIndex - 1 : playlist.length - 1
-                                          update(playlist[index], index)} })
+                                          index = (player.soundIndex > 0) ? player.soundIndex - 1 : library.length - 1
+                                          update(library[index], index)} })
 shufflebtn.addEventListener('click', () => { player.shuffle = (player.shuffle) ? false : true
                                             if(!player.playing) shufflePlaylist() })
 repeatbtn.addEventListener('click', () => player.repeat = (player.repeat) ? false : true )
@@ -44,6 +44,20 @@ function updateCurrTitle(song) {
   player.title = song.title
 }
 
+function update(song, index) {
+  var sound = createHowlObject(song)
+  updateCurrTitle(song)
+  resetTimer()
+  playSelected(sound, index)
+}
+
+function resetTimer() {
+  clearInterval(updateTime)
+  mins.innerHTML = "00"
+  secs.innerHTML = "00"
+  return
+}
+
 function updateTrackDuration () {
   var mins = pad(Math.floor(player.sound._duration / 60))
   var secs = pad(Math.floor(player.sound._duration - (mins * 60)))
@@ -62,13 +76,6 @@ function updateTimeAndSeek () {
 }
 
 function pad (val) { return val > 9 ? val : "0" + val }
-
-function update(song, index) {
-  var sound = createHowlObject(song)
-  updateCurrTitle(song)
-  resetTimer()
-  playSelected(sound, index)
-}
 
 function muteUnmuteSound() {
   if (player.sound._muted === true) {
@@ -99,16 +106,9 @@ function setVolume() {
   player.sound.volume(player.volume)
 }
 
-function resetTimer() {
-  clearInterval(updateTime)
-  mins.innerHTML = "00"
-  secs.innerHTML = "00"
-  return
-}
-
 function shufflePlaylist() {
-  var index = Math.floor(Math.random() * (playlist.length))
-  update(playlist[index], index)
+  var index = Math.floor(Math.random() * (library.length))
+  update(library[index], index)
 }
 
 function search() {
@@ -120,44 +120,74 @@ function search() {
   }
 }
 
-function createHowlObject(song) {
- return new Howl({ src: song.src,
-  onload: () => { updateTrackDuration()
-    seeker.value = 0 },
-  onplay: () => { player.playing = true
-    setVolume()
-    updateTimeAndSeek() },
-  onstop: () => player.playing = false,
-  onend: () => { player.playing = false
-    resetTimer()
-    if(player.shuffle) shufflePlaylist()
-    if(player.repeat) { player.sound = createHowlObject(playlist[player.soundIndex])
-      player.sound.play()} },
-  onpause: () => { player.playing = false
-      clearInterval(updateTime) },
-  onmute: () => { volbtn.style.background = (player.sound._muted) ?
-    "url(./images/mute.png) no-repeat" : "url(./images/volume.png) no-repeat"
-    volbtn.style.backgroundSize = "contain" } })
+function makeRequest() {
+  var xhr = new XMLHttpRequest()
+  xhr.open("GET", "https://api.fanburst.com/tracks/trending?page=1&per_page=5;client_id=08820572-567e-4aeb-9e3c-61e029d82a46", false)
+  xhr.send()
+  addToLibrary(xhr.responseText)
 }
 
-var playlist = [{
-  title: 'Dance of death',
-  src: 'http://localhost:8000/music/danceofdeath.mp3'
-},
-{
-  title: 'Paint it Black',
-  src: 'http://localhost:8000/music/paint-it-black.mp3'
-},
-{
-  title: 'Satisfaction',
-  src: 'http://localhost:8000/music/Satisfaction.mp3'
-}]
+function addToLibrary(resp) {
+  resp = JSON.parse(resp)
+  var track = {}
+  track["title"] = resp[0].title
+  track["src"] = resp[0].stream_url+"?client_id=08820572-567e-4aeb-9e3c-61e029d82a46"
+  library.push(track)
+  // resp.forEach(function(item) {
+  //   var track = {}
+  //   track["title"] = item.title
+  //   track["src"] = item.stream_url
+  //   library.push(track)
+  // })
+  console.log(library) 
+}
+
+function createHowlObject(song) {
+ return new Howl({ 
+  src: song.src,
+  format: "mp3",
+  preload: true,
+  html5: true,
+  xhrWithCredentials: true,
+  onload: () => { updateTrackDuration()
+                  seeker.value = 0 },
+  onplay: () => { player.playing = true
+                  setVolume()
+                  updateTimeAndSeek() },
+  onstop: () => player.playing = false,
+  onend: () => {  player.playing = false
+                  resetTimer()
+                  if(player.shuffle) shufflePlaylist()
+                  if(player.repeat) { player.sound = createHowlObject(library[player.soundIndex])
+                  player.sound.play()} },
+  onpause: () => { player.playing = false
+                   clearInterval(updateTime) },
+  onmute: () => { volbtn.style.background = (player.sound._muted) ?
+                  "url(./images/mute.png) no-repeat" : "url(./images/volume.png) no-repeat"
+                  volbtn.style.backgroundSize = "contain" } 
+                })
+}
+
+var library = [
+    {
+    title: 'Dance of death',
+    src: 'http://localhost:8000/music/danceofdeath.mp3'
+  },
+  {
+    title: 'Paint it Black',
+    src: 'http://localhost:8000/music/paint-it-black.mp3'
+  },
+  {
+    title: 'Satisfaction',
+    src: 'http://localhost:8000/music/Satisfaction.mp3'
+  }
+]
 
 var player = {
-  sound: createHowlObject(playlist[0]),
+  sound: createHowlObject(library[0]),
   soundIndex: 0,
   playing: false,
-  title: playlist[0].title,
+  title: library[0].title,
   seeking: false,
   volume: 1,
   shuffle: false,
@@ -176,7 +206,8 @@ function createListItem(song, index) {
 
 function initAudioPlayer() {
   var playlistItems = document.createElement('ul') //creating main playlist
-  playlist.forEach( (song, index) => {
+  makeRequest()
+  library.forEach( (song, index) => {
     var listItem = createListItem(song,index)
     playlistItems.appendChild(listItem)
   })
@@ -185,7 +216,7 @@ function initAudioPlayer() {
   playlistItems.style.listStyleType = 'none'
   var parent = document.getElementById('playlistContainer')
   parent.appendChild(playlistItems)
-  var titleText = document.createTextNode(playlist[0].title)
+  var titleText = document.createTextNode(library[0].title)
   var parentNode = document.getElementById('title')
   parentNode.appendChild(titleText)
 }
