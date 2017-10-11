@@ -96,15 +96,22 @@ html, body, .rootContainer {
   overflow: hidden;
   padding: 0px;
 }
-.playlist {
+.library {
   width: 100%;
-  overflow: hidden;
   display: flex;
+  flex-direction: row;
   font-family: sans-serif;
-  flex-direction: column;
   height: 74.5%;
 }
-
+#libraryContainer {
+  overflow-y: scroll;
+  height: 100%;
+  flex-grow: 1;
+}
+#albumArt {
+  height: 100%;
+  flex-grow: 5;
+}
 .trackInfo {
   display: flex;
   background-color: #00695c;

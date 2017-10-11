@@ -1,3 +1,4 @@
+//create object references
 playbtn = document.getElementById('playBtn')
 pausebtn = document.getElementById('pauseBtn')
 prevbtn = document.getElementById('prevBtn')
@@ -8,8 +9,14 @@ volbtn = document.getElementById('volume')
 seeker = document.getElementById('seekSlider')
 volumeslider = document.getElementById("volumeSlider")
 searchInput = document.getElementById('searchInput')
+coverArt = document.getElementById('albumArt')
 
-playbtn.addEventListener('click', () => { if(!player.playing) player.sound.play() } )
+//add event handlers
+playbtn.addEventListener('click', () => { if(!player.playing) {
+                                            player.sound.play()
+                                            coverArt.style.background = "url("+player.image+") no-repeat"
+                                            coverArt.style.backgroundSize = "cover"
+                                          } } )
 pausebtn.addEventListener('click', () => player.sound.pause() )
 nextbtn.addEventListener('click', () => { if(player.shuffle) shufflePlaylist()
                                           else {
@@ -44,9 +51,15 @@ function updateCurrTitle(song) {
   player.title = song.title
 }
 
+function updateCurrImage(song) {
+  player.image = song.albumArt
+  coverArt.style.background = "url("+player.image+") no-repeat"
+  coverArt.style.backgroundSize = "cover"
+}
 function update(song, index) {
   var sound = createHowlObject(song)
   updateCurrTitle(song)
+  updateCurrImage(song)
   resetTimer()
   playSelected(sound, index)
 }
@@ -129,18 +142,20 @@ function makeRequest() {
 
 function addToLibrary(resp) {
   resp = JSON.parse(resp)
-  for(let i = 0; i < 5; i++) {
-  let track = {}
-  track["title"] = resp[i].title
-  track["src"] = resp[i].stream_url+"?client_id=08820572-567e-4aeb-9e3c-61e029d82a46"
-  library.push(track) }
+  resp.map((item) => {
+    let track = {}
+    track["title"] = item.title.toUpperCase()
+    track["src"] = item.stream_url+"?client_id=08820572-567e-4aeb-9e3c-61e029d82a46"
+    track["albumArt"] = item.image_url
+    library.push(track) 
+  })
+  console.log(library)
 }
 
 function createHowlObject(song) {
  return new Howl({ 
   src: song.src,
   format: "mp3",
-  preload: true,
   html5: true,
   xhrWithCredentials: true,
   onload: () => { updateTrackDuration()
@@ -171,7 +186,8 @@ function initPlayerState() {
     seeking: false,
     volume: 1,
     shuffle: false,
-    repeat: false
+    repeat: false,
+    image: library[0].albumArt
   }
 }
 
@@ -186,21 +202,25 @@ function createListItem(song, index) {
 }
 
 function initAudioPlayer() {
-  var libraryItems = document.createElement('ul') //creating library container
+  var libraryItems = document.createElement('ul') //creating libraryItem container
   makeRequest()
   library.forEach((song, index) => {
     var listItem = createListItem(song,index)
     libraryItems.appendChild(listItem)
   })
-  libraryItems.className = 'playlist'
   libraryItems.id = 'list'
   libraryItems.style.listStyleType = 'none'
+  libraryItems.style.padding = '10px'
+  libraryItems.style.width = '100%'
+  libraryItems.style.margin = '0px'
   player = initPlayerState()
-  var parent = document.getElementById('playlistContainer')
+  var parent = document.getElementById('libraryContainer')
   parent.appendChild(libraryItems)
   var titleText = document.createTextNode(library[0].title)
   var parentNode = document.getElementById('title')
   parentNode.appendChild(titleText)
+  coverArt.style.background = "url("+player.image+") no-repeat"
+  coverArt.style.backgroundSize = "cover"
 }
 
 window.addEventListener('load', initAudioPlayer)
