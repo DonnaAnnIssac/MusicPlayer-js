@@ -129,21 +129,25 @@ function search() {
     li.style.display = (name.toUpperCase().indexOf(filter) !== -1) ? 'list-item' : 'none'
     if(li.style.display === 'list-item') return li
   })
+  console.log(arr)
   //if not found, use search call
-  if(arr.length === 0) {
-    var xhr = new XMLHttpRequest()
-    xhr.open("GET", "https://api.fanburst.com/tracks/search?query="+searchInput.value+";client_id=08820572-567e-4aeb-9e3c-61e029d82a46", false)
-    xhr.send()
-    if(JSON.parse(xhr.responseText).length !== 0) {
-      var old = library
-      addToLibrary(xhr.responseText)
-      var newlyAdded = library.filter((song) => { 
-        if(!(song in old))
-          return song
-      })
-      createList(newlyAdded)
-      search()
-    }
+  if(arr.length === 0) searchAndAdd(filter)
+}
+
+function searchAndAdd(filter) {
+  var xhr = new XMLHttpRequest()
+  xhr.open("GET", "https://api.fanburst.com/tracks/search?query="+searchInput.value+";client_id=08820572-567e-4aeb-9e3c-61e029d82a46", false)
+  xhr.send()
+  var results = JSON.parse(xhr.responseText)
+  if(results[0].title.toUpperCase().indexOf(filter) !== -1) {
+    var old = library
+    addToLibrary(results)
+    var newlyAdded = library.filter((song) => { 
+      if(!(song in old))
+        return song
+    })
+    createList(newlyAdded)
+    search()
   }
 }
 
@@ -151,11 +155,10 @@ function makeRequest() {
   var xhr = new XMLHttpRequest()
   xhr.open("GET", "https://api.fanburst.com/tracks/trending?client_id=08820572-567e-4aeb-9e3c-61e029d82a46", false)
   xhr.send()
-  addToLibrary(xhr.responseText)
+  addToLibrary(JSON.parse(xhr.responseText))
 }
 
 function addToLibrary(resp) {
-  resp = JSON.parse(resp)
   resp.map((item) => {
     let track = {}
     track["title"] = item.title.toUpperCase()
