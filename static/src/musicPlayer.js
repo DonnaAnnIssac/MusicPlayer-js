@@ -1,6 +1,5 @@
 //create object references
-playbtn = document.getElementById('playBtn')
-pausebtn = document.getElementById('pauseBtn')
+playPausebtn = document.getElementById('playPauseBtn')
 prevbtn = document.getElementById('prevBtn')
 nextbtn = document.getElementById('nextBtn')
 shufflebtn = document.getElementById('shuffle')
@@ -12,12 +11,8 @@ searchInput = document.getElementById('searchInput')
 coverArt = document.getElementById('albumArt')
 
 //add event handlers
-playbtn.addEventListener('click', () => { if(!player.playing) {
-                                            player.sound.play()
-                                            coverArt.style.background = "url("+player.image+") no-repeat"
-                                            coverArt.style.backgroundSize = "cover"
-                                          } } )
-pausebtn.addEventListener('click', () => player.sound.pause() )
+playPausebtn.addEventListener('click', () => { if(!player.playing) player.sound.play()
+                                          else player.sound.pause() } )
 nextbtn.addEventListener('click', () => { if(player.shuffle) shufflePlaylist()
                                           else {
                                           index = (player.soundIndex < library.length - 1) ? player.soundIndex + 1 : 0
@@ -35,7 +30,9 @@ seeker.addEventListener('mousedown', (event) => { player.seeking = true
 seeker.addEventListener('mousemove', (event) => seek(event))
 seeker.addEventListener('mouseup', () => player.seeking = false)
 volumeslider.addEventListener('mousemove', setVolume)
+
 var updateTime,library = [], player = {}
+var libraryItems = document.createElement('ul')
 
 function playSelected(sound, index) {
   if(player.playing === false) player.playing = true
@@ -126,16 +123,33 @@ function shufflePlaylist() {
 
 function search() {
   var filter = searchInput.value.toUpperCase()
-  var lis = document.getElementsByTagName('li')
-  for(let i = 0; i < lis.length; i++) {
-    var name = lis[i].innerHTML
-    lis[i].style.display = (name.toUpperCase().indexOf(filter) !== -1) ? 'list-item' : 'none'
+  var lis = Array.from(document.getElementsByTagName('li'))
+  arr = lis.filter((li) => {
+    var name = li.innerHTML
+    li.style.display = (name.toUpperCase().indexOf(filter) !== -1) ? 'list-item' : 'none'
+    if(li.style.display === 'list-item') return li
+  })
+  //if not found, use search call
+  if(arr.length === 0) {
+    var xhr = new XMLHttpRequest()
+    xhr.open("GET", "https://api.fanburst.com/tracks/search?query="+searchInput.value+";client_id=08820572-567e-4aeb-9e3c-61e029d82a46", false)
+    xhr.send()
+    if(JSON.parse(xhr.responseText).length !== 0) {
+      var old = library
+      addToLibrary(xhr.responseText)
+      var newlyAdded = library.filter((song) => { 
+        if(!(song in old))
+          return song
+      })
+      createList(newlyAdded)
+      search()
+    }
   }
 }
 
 function makeRequest() {
   var xhr = new XMLHttpRequest()
-  xhr.open("GET", "https://api.fanburst.com/tracks/trending?page=1&per_page=5;client_id=08820572-567e-4aeb-9e3c-61e029d82a46", false)
+  xhr.open("GET", "https://api.fanburst.com/tracks/trending?client_id=08820572-567e-4aeb-9e3c-61e029d82a46", false)
   xhr.send()
   addToLibrary(xhr.responseText)
 }
@@ -149,7 +163,6 @@ function addToLibrary(resp) {
     track["albumArt"] = item.image_url
     library.push(track) 
   })
-  console.log(library)
 }
 
 function createHowlObject(song) {
@@ -161,6 +174,8 @@ function createHowlObject(song) {
   onload: () => { updateTrackDuration()
                   seeker.value = 0 },
   onplay: () => { player.playing = true
+                  playPausebtn.style.background = "url(./images/pause2.png) no-repeat"
+                  playPausebtn.style.backgroundSize = "contain"
                   setVolume()
                   updateTimeAndSeek() },
   onstop: () => player.playing = false,
@@ -170,6 +185,8 @@ function createHowlObject(song) {
                   if(player.repeat) { player.sound = createHowlObject(library[player.soundIndex])
                   player.sound.play()} },
   onpause: () => { player.playing = false
+                   playPausebtn.style.background = "url(./images/play2.png) no-repeat"                  
+                   playPausebtn.style.backgroundSize = "contain"
                    clearInterval(updateTime) },
   onmute: () => { volbtn.style.background = (player.sound._muted) ?
                   "url(./images/mute.png) no-repeat" : "url(./images/volume.png) no-repeat"
@@ -191,19 +208,7 @@ function initPlayerState() {
   }
 }
 
-//creating sub divs to hold info of each track
-function createListItem(song, index) {
-  var listItem = document.createElement('li')
-  var title = document.createTextNode(song.title)
-  listItem.appendChild(title)
-  listItem.className = 'playlist'
-  listItem.addEventListener('click', () => update(song, index))
-  return listItem
-}
-
-function initAudioPlayer() {
-  var libraryItems = document.createElement('ul') //creating libraryItem container
-  makeRequest()
+function createList(library) {
   library.forEach((song, index) => {
     var listItem = createListItem(song,index)
     libraryItems.appendChild(listItem)
@@ -213,6 +218,21 @@ function initAudioPlayer() {
   libraryItems.style.padding = '10px'
   libraryItems.style.width = '100%'
   libraryItems.style.margin = '0px'
+}
+//creating sub divs to hold info of each track
+function createListItem(song, index) {
+  var listItem = document.createElement('li')
+  var title = document.createTextNode(song.title)
+  listItem.appendChild(title)
+  listItem.className = 'playlist'
+  // listItem.style.borderRadius = "50px";
+  listItem.addEventListener('click', () => update(song, index))
+  return listItem
+}
+
+function initAudioPlayer() {
+  makeRequest()
+  createList(library)
   player = initPlayerState()
   var parent = document.getElementById('libraryContainer')
   parent.appendChild(libraryItems)
