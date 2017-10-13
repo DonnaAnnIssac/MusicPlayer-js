@@ -8,6 +8,7 @@
   <body>
     <div class="rootContainer" id="root">
       <div class="controlsContainer">
+        <button id="showLib"></button>
         <div class="search">
           <div class="search" id="searchIcon"></div>
           <input type="search" class="search" id="searchInput" placeholder="Search..." onkeyup="search()">
@@ -15,8 +16,7 @@
         <div class="btn">
           <div class="btn" id="shuffle"></div>
           <div class="btn" id="prevBtn"></div>
-          <div class="btn" id="playBtn"></div>
-          <div class="btn" id="pauseBtn"></div>
+          <div class="btn" id="playPauseBtn"></div>
           <div class="btn" id="nextBtn"></div>
           <div class="btn" id="repeat"></div>
         </div>
@@ -25,7 +25,7 @@
           <input type="range" class="volCtrls "id="volumeSlider" min="0" max="100" value="100" step="1">
         </div>
       </div>
-      <div class="library">
+      <div class="library" id="main">
         <div class="library" id="libraryContainer"></div>
         <div class="library" id="albumArt"></div>
       </div>

@@ -9,6 +9,8 @@ seeker = document.getElementById('seekSlider')
 volumeslider = document.getElementById("volumeSlider")
 searchInput = document.getElementById('searchInput')
 coverArt = document.getElementById('albumArt')
+togglebtn = document.getElementById('showLib')
+parent = document.getElementById('libraryContainer')
 
 //add event handlers
 playPausebtn.addEventListener('click', () => { if(!player.playing) player.sound.play()
@@ -30,7 +32,9 @@ seeker.addEventListener('mousedown', (event) => { player.seeking = true
 seeker.addEventListener('mousemove', (event) => seek(event))
 seeker.addEventListener('mouseup', () => player.seeking = false)
 volumeslider.addEventListener('mousemove', setVolume)
-
+togglebtn.addEventListener('click', () => { parent.style.display = (player.showLib) ? "none" : "flex"
+                                            player.showLib = (!player.showLib)
+                                          })
 var updateTime,library = [], player = {}
 var libraryItems = document.createElement('ul')
 
@@ -51,7 +55,7 @@ function updateCurrTitle(song) {
 function updateCurrImage(song) {
   player.image = song.albumArt
   coverArt.style.background = "url("+player.image+") no-repeat"
-  coverArt.style.backgroundSize = "cover"
+  coverArt.style.backgroundSize = "100% 100%"
 }
 function update(song, index) {
   var sound = createHowlObject(song)
@@ -207,7 +211,8 @@ function initPlayerState() {
     volume: 1,
     shuffle: false,
     repeat: false,
-    image: library[0].albumArt
+    image: library[0].albumArt,
+    showLib: false
   }
 }
 
@@ -237,13 +242,12 @@ function initAudioPlayer() {
   makeRequest()
   createList(library)
   player = initPlayerState()
-  var parent = document.getElementById('libraryContainer')
   parent.appendChild(libraryItems)
   var titleText = document.createTextNode(library[0].title)
   var parentNode = document.getElementById('title')
   parentNode.appendChild(titleText)
   coverArt.style.background = "url("+player.image+") no-repeat"
-  coverArt.style.backgroundSize = "cover"
+  coverArt.style.backgroundSize = "100% 100%"
 }
 
 window.addEventListener('load', initAudioPlayer)
