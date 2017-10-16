@@ -8,10 +8,12 @@
   <body>
     <div class="rootContainer" id="root">
       <div class="controlsContainer">
-        <button id="showLib"></button>
+        <div class="toggle">
+          <div id="showLib"></div>
+        </div>
         <div class="search">
-          <div class="search" id="searchIcon"></div>
-          <input type="search" class="search" id="searchInput" placeholder="Search..." onkeyup="search()">
+          <!-- <div class="search" id="searchIcon"></div> -->
+          <input type="search" class="search" id="searchInput" placeholder="Search..." onchange="search()">
         </div>
         <div class="btn">
           <div class="btn" id="shuffle"></div>
@@ -27,17 +29,26 @@
       </div>
       <div class="library" id="main">
         <div class="library" id="libraryContainer"></div>
-        <div class="library" id="albumArt"></div>
+        <div class="library" id="showArt">
+          <div class="library" id="albumArt"></div>
+        </div>
+        <div class="library" id="playlistDisplay"></div>
       </div>
       <div class="trackInfo">
-        <div class="trackInfo" id="title"></div>
-        <div class="trackInfo" id="timebox">
-          <div class="trackInfo" id="timer">
-            <div id="mins">00</div>:
-            <div id="secs">00</div>
+        <div class="trackInfo" id="info">
+          <div class="trackInfo" id="title"></div>
+          <div class="trackInfo" id="timebox">
+            <div class="trackInfo" id="timer">
+              <div id="mins">00</div>:
+              <div id="secs">00</div>
+            </div>
+            <input type="range" class="trackInfo" id="seekSlider" min="0" max="100" step="any" value="0">
+            <div class="trackInfo" id="duration"></div>
           </div>
-          <input type="range" class="trackInfo" id="seekSlider" min="0" max="100" step="any" value="0">
-          <div class="trackInfo" id="duration"></div>
+        </div>
+        <div class="trackInfo" id="playlist">
+          <div class="trackInfo" id="add"></div>
+          <div class="trackInfo" id="view"></div>
         </div>
       </div>
     </div>

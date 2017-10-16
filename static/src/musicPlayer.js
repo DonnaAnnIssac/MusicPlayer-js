@@ -11,7 +11,9 @@ searchInput = document.getElementById('searchInput')
 coverArt = document.getElementById('albumArt')
 togglebtn = document.getElementById('showLib')
 parent = document.getElementById('libraryContainer')
-
+playlistAdd = document.getElementById('add')
+playlistView = document.getElementById('playlistDisplay')
+view = document.getElementById('view')
 //add event handlers
 playPausebtn.addEventListener('click', () => { if(!player.playing) player.sound.play()
                                           else player.sound.pause() } )
@@ -35,8 +37,53 @@ volumeslider.addEventListener('mousemove', setVolume)
 togglebtn.addEventListener('click', () => { parent.style.display = (player.showLib) ? "none" : "flex"
                                             player.showLib = (!player.showLib)
                                           })
-var updateTime,library = [], player = {}
+playlistAdd.addEventListener('click', () => createPlaylist())   
+view.addEventListener('click', () => {  showPlaylist = (!showPlaylist) ? true : false
+                                        playlistView.style.display = (showPlaylist) ? "flex" : "none"
+                                      })                                       
+var updateTime,library = [], player = {}, playlist = [], add = false, showPlaylist = false, index = 0
 var libraryItems = document.createElement('ul')
+var playlistItems = document.createElement('ul')
+
+function createPlaylist() {
+  if(!add) {
+    add = true
+    playlistAdd.style.background = 'url("./images/playlist-add-check.png") no-repeat'
+    playlistAdd.style.backgroundSize = 'contain'}
+  else {
+    add = false
+    playlistAdd.style.background = 'url("./images/playlist-add.png") no-repeat'
+    playlistAdd.style.backgroundSize = 'contain'
+    pushToStorage()
+  }
+}
+
+function addToPlaylist(song, index) {
+  playlist.push(song)
+  console.log(playlist)
+}
+
+function pushToStorage() {
+  appendToList()
+  localStorage.setItem(index, JSON.stringify(playlist))
+  ++index
+}
+
+function appendToList() {
+  for(let i = 0; i <=index; i++)
+    playlist.push(JSON.parse(localStorage.getItem(i)))
+  console.log(playlist)
+  playlist.forEach((song, index) => {
+    var listItem = createListItem(song, index)
+    playlistItems.appendChild(listItem)
+  })
+  playlistItems.id = 'playlistDisplay'
+  playlistItems.style.listStyleType = 'none'
+  playlistItems.style.padding = '10px'
+  playlistItems.style.width = '100%'
+  playlistItems.style.margin = '0px'
+  playlistView.appendChild(playlistItems)
+}
 
 function playSelected(sound, index) {
   if(player.playing === false) player.playing = true
@@ -140,26 +187,39 @@ function search() {
 
 function searchAndAdd(filter) {
   var xhr = new XMLHttpRequest()
-  xhr.open("GET", "https://api.fanburst.com/tracks/search?query="+searchInput.value+";client_id=08820572-567e-4aeb-9e3c-61e029d82a46", false)
-  xhr.send()
-  var results = JSON.parse(xhr.responseText)
-  if(results[0].title.toUpperCase().indexOf(filter) !== -1) {
-    var old = library
-    addToLibrary(results)
-    var newlyAdded = library.filter((song) => { 
-      if(!(song in old))
-        return song
-    })
-    createList(newlyAdded)
-    search()
+  xhr.open("GET", "https://api.fanburst.com/tracks/search?query="+searchInput.value+";client_id=08820572-567e-4aeb-9e3c-61e029d82a46", true)
+  xhr.onload = () => {
+    var results = JSON.parse(xhr.responseText)
+    if(results[0].title.toUpperCase().indexOf(filter) !== -1) {
+      var old = library
+      addToLibrary(results)
+      var newlyAdded = library.filter((song) => { 
+        if(!(song in old))
+          return song
+      })
+      createList(newlyAdded)
+      search()
+    }  
   }
+  xhr.send()
+  
+  // else {
+  //   document.write("Nothing to display")
+  // }
 }
 
-function makeRequest() {
+function makeRequest(callback) {
   var xhr = new XMLHttpRequest()
-  xhr.open("GET", "https://api.fanburst.com/tracks/trending?client_id=08820572-567e-4aeb-9e3c-61e029d82a46", false)
+  xhr.open("GET", "https://api.fanburst.com/tracks/trending?client_id=08820572-567e-4aeb-9e3c-61e029d82a46", true)
+  xhr.onload = () => {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      addToLibrary(JSON.parse(xhr.responseText)) 
+      callback()
+    }
+    else  
+      console.error(xhr.statusText)}
+  xhr.onerror = () => console.error(xhr.statusText)
   xhr.send()
-  addToLibrary(JSON.parse(xhr.responseText))
 }
 
 function addToLibrary(resp) {
@@ -212,7 +272,7 @@ function initPlayerState() {
     shuffle: false,
     repeat: false,
     image: library[0].albumArt,
-    showLib: false
+    showLib: false,
   }
 }
 
@@ -234,12 +294,15 @@ function createListItem(song, index) {
   listItem.appendChild(title)
   listItem.className = 'playlist'
   // listItem.style.borderRadius = "50px";
-  listItem.addEventListener('click', () => update(song, index))
+  listItem.addEventListener('click', () => {
+    if(!add)
+      update(song, index)
+    else
+      addToPlaylist(song, index)
+  })
   return listItem
 }
-
-function initAudioPlayer() {
-  makeRequest()
+function callback() {
   createList(library)
   player = initPlayerState()
   parent.appendChild(libraryItems)
@@ -248,6 +311,9 @@ function initAudioPlayer() {
   parentNode.appendChild(titleText)
   coverArt.style.background = "url("+player.image+") no-repeat"
   coverArt.style.backgroundSize = "100% 100%"
+}
+function initAudioPlayer() {
+  makeRequest(callback)
 }
 
 window.addEventListener('load', initAudioPlayer)
