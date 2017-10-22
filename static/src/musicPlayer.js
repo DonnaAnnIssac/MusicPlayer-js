@@ -40,8 +40,9 @@ togglebtn.addEventListener('click', () => { parent.style.display = (player.showL
 playlistAdd.addEventListener('click', () => createPlaylist())   
 view.addEventListener('click', () => {  showPlaylist = (!showPlaylist) ? true : false
                                         playlistView.style.display = (showPlaylist) ? "flex" : "none"
+                                        appendToList()
                                       })                                       
-var updateTime,library = [], player = {}, playlist = [], add = false, showPlaylist = false, index = 0
+var updateTime,library = [], player = {}, playlist = [], add = false, showPlaylist = false
 var libraryItems = document.createElement('ul')
 var playlistItems = document.createElement('ul')
 
@@ -64,25 +65,27 @@ function addToPlaylist(song, index) {
 }
 
 function pushToStorage() {
+  localStorage.setItem('playlist', JSON.stringify(playlist))
   appendToList()
-  localStorage.setItem(index, JSON.stringify(playlist))
-  ++index
 }
 
 function appendToList() {
-  for(let i = 0; i <=index; i++)
-    playlist.push(JSON.parse(localStorage.getItem(i)))
-  console.log(playlist)
-  playlist.forEach((song, index) => {
-    var listItem = createListItem(song, index)
-    playlistItems.appendChild(listItem)
-  })
-  playlistItems.id = 'playlistDisplay'
-  playlistItems.style.listStyleType = 'none'
-  playlistItems.style.padding = '10px'
-  playlistItems.style.width = '100%'
-  playlistItems.style.margin = '0px'
-  playlistView.appendChild(playlistItems)
+  if(localStorage.getItem('playlist'))
+    // playlist.push(JSON.parse(localStorage.getItem(i)))
+  // console.log(playlist)
+      playlist = JSON.parse(localStorage.getItem('playlist'))
+    console.log(playlist)
+    playlist.forEach((song, index) => {
+      var listItem = createListItem(song, index)
+      playlistItems.appendChild(listItem)
+    })
+    playlistItems.id = 'playlistDisplay'
+    playlistItems.style.listStyleType = 'none'
+    playlistItems.style.padding = '10px'
+    playlistItems.style.width = '100%'
+    playlistItems.style.margin = '0px'
+    console.log(playlistItems)
+    playlistView.appendChild(playlistItems)
 }
 
 function playSelected(sound, index) {
@@ -174,6 +177,8 @@ function shufflePlaylist() {
 
 function search() {
   var filter = searchInput.value.toUpperCase()
+  // if(filter.length === 0)
+
   var lis = Array.from(document.getElementsByTagName('li'))
   arr = lis.filter((li) => {
     var name = li.innerHTML
@@ -199,13 +204,12 @@ function searchAndAdd(filter) {
       })
       createList(newlyAdded)
       search()
-    }  
+    }
+    else 
+      document.getElementById('libraryContainer').textContent = 'Nothing to display'  
   }
   xhr.send()
-  
-  // else {
-  //   document.write("Nothing to display")
-  // }
+
 }
 
 function makeRequest(callback) {
